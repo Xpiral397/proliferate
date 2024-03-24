@@ -3,11 +3,13 @@ import { createContext } from 'react';
 
 export const tutorViewInitalData = {
     authentication: {
+        user_type:"",
         signin: false,
         token: '',
-        error: 'Unable to Login'
+        error: ''
     },
     tutorProfile: {
+        myClass: {},
         profile: {
             user: {},
             full_name: 'loading',

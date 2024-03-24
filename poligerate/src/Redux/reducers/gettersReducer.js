@@ -1,7 +1,7 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {getTutorProfileAction, findTutorsAction, createClassAction, updateClassAction /* Import other actions */} from '../actions/tutorActions';
+import { createSlice } from '@reduxjs/toolkit';
+import { getTutorProfileAction, findTutorsAction, createClassAction, updateClassAction /* Import other actions */ } from '../actions/tutorActions';
 
-const initialState={
+const initialState = {
     tutorProfile: null,
     tutorProfileStatus: 'idle',
     tutorProfileError: null,
@@ -15,7 +15,7 @@ const initialState={
     // Add other relevant initial state properties here...
 };
 
-const tutorSlice=createSlice({
+const tutorSlice = createSlice({
     name: 'tutor',
     initialState,
     reducers: {
@@ -24,26 +24,26 @@ const tutorSlice=createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getTutorProfileAction.pending, (state) => {
-                state.tutorProfileStatus='loading';
+                state.tutorProfileStatus = 'loading';
             })
             .addCase(getTutorProfileAction.fulfilled, (state, action) => {
-                state.tutorProfileStatus='succeeded';
-                state.tutorProfile=action.payload;
+                state.tutorProfileStatus = 'succeeded';
+                state.tutorProfile = action.payload;
             })
             .addCase(getTutorProfileAction.rejected, (state, action) => {
-                state.tutorProfileStatus='failed';
-                state.tutorProfileError=action.payload;
+                state.tutorProfileStatus = 'failed';
+                state.tutorProfileError = action.payload;
             })
             // Add cases for other actions similarly...
             .addCase(createClassAction.pending, (state) => {
-                state.createClassStatus='loading';
+                state.createClassStatus = 'loading';
             })
             .addCase(createClassAction.fulfilled, (state) => {
-                state.createClassStatus='succeeded';
+                state.createClassStatus = 'succeeded';
             })
             .addCase(createClassAction.rejected, (state, action) => {
-                state.createClassStatus='failed';
-                state.createClassError=action.payload;
+                state.createClassStatus = 'failed';
+                state.createClassError = action.payload;
             });
         // Add cases for other actions similarly...
     },

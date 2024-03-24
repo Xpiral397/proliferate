@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { faAngleLeft, faAngleRight, faBell, faChevronDown, faMagnifyingGlass, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/logo2.png';
 import home from './Icons/home.png';
@@ -55,11 +55,16 @@ const TutorDashboard = () => {
   const [fullName, setFullName] = useState('');
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [email, setEmail]=useState('')
-  const {session}=useContext(UseSessionContext)
-  const location = useLocation();
+  const {session, Logout}=useContext(UseSessionContext)
+  const location=useLocation();
+  const navigate  = useNavigate(); 
 
   useEffect(() => {
-    console.log(session,'YMC')
+    console.log(session, 'YMC')
+    if( !session && session.authentication.signin) {
+      navigate('/signin')
+      return 
+    } 
     // Check if the location state contains fullName and email and update the state
     if (location.state) {
       setFullName(location.state.fullName || '');
@@ -130,7 +135,7 @@ const TutorDashboard = () => {
           </div>
 
           <div className="logout">
-            <button className="flex gap-2 items-center justify-start text-white bg-[#186bad] w-[200px] py-3 text-sm px-5 hover:bg-[#509cdb] rounded">
+            <button onClick={()=>Logout('TUTOR')} className="flex gap-2 items-center justify-start text-white bg-[#186bad] w-[200px] py-3 text-sm px-5 hover:bg-[#509cdb] rounded">
               <FontAwesomeIcon icon={faRightFromBracket} />
               Logout
             </button>

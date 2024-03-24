@@ -39,12 +39,13 @@ let persistor=persistStore(store);
 function App() {
 
   return (
-    <UseSessionProvider>
-      <UseTutorProvider>
+   
       <ReduxProvider store={store}>
         <PersistGate persistor={persistor}>
-          <BrowserRouter>
-            <Routes>
+        <BrowserRouter>
+           <UseSessionProvider>
+      <UseTutorProvider>
+          <Routes>
               <Route path="/" exact element={<LandingPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -67,12 +68,13 @@ function App() {
               <Route path='/room/:roomId' element={<Room />}></Route>
               <Route path='/admin' element={<AdminDashboard />} />
             </Routes>
+            </UseTutorProvider>
+      </UseSessionProvider>
           </BrowserRouter>
         </PersistGate>
         <ToastContainer />
       </ReduxProvider>
-      </UseTutorProvider>
-      </UseSessionProvider>
+      
   )
 }
 

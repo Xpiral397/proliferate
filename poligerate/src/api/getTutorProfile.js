@@ -5,7 +5,7 @@ export async function getToken() {
 }
 
 export async function useTutorProfile() {
-    const token = localStorage.getItem('token', getToken())
+    const token = JSON.parse(localStorage.getItem('tutor_data') ?? '{}')?.authentication?.token
     console.log(token, 'kop')
     try {
         const fetch = await axiosClient().get('/tutor/get-tutor-profile/', {

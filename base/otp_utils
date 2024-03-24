@@ -1,0 +1,21 @@
+import random
+import string
+
+def generate_random_otp(length=6):
+    """
+    Generate a random OTP (One-Time Password) of a specified length.
+
+    Args:
+    - length (int): The length of the OTP. Default is 6.
+
+    Returns:
+    - str: The generated OTP.
+    """
+    # Define the pool of characters from which OTP will be generated
+    characters = string.digits
+
+    # Generate OTP using random.choices (Python 3.6+)
+    otp = ''.join(random.choices(characters, k=length))
+
+    return otp
+

@@ -82,7 +82,7 @@ function Signup() {
     }
 
     // Dispatch the signup action
-    dispatch(
+    SignupUser();
       registerStudentAction({
         username: username,
         first_name: first_name,
@@ -92,7 +92,7 @@ function Signup() {
         password2: password2,
       })
 
-    );
+
   };
 
   return (

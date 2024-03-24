@@ -1,10 +1,10 @@
 import json
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import JSONField
 from django.utils.text import slugify
-import uuid
-
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 
 
@@ -28,9 +28,18 @@ class Profile(models.Model):
     phone =models.CharField(max_length=50, blank=True, null=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     _id = models.AutoField(primary_key=True, editable=False)
+    is_verified = models.BooleanField(default = False, null=True, blank=True)
+    token = models.CharField(max_length=10, null =True, blank = True)
 
     def __str__(self):
         return self.email
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
 
 
 class TutorProfile(models.Model):
@@ -81,12 +90,7 @@ class TutorVerifictions(models.Model):
 
     def __str__(self) -> str:
         return self.profile.full_name
-    
 
-
-
-
-    
 
 class StudentProfile(models.Model):
     profile = models.OneToOneField(Profile,on_delete=models.CASCADE)

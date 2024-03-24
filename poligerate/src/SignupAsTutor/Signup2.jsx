@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,10 +10,14 @@ import { clearSignUpStatus } from '../Redux/reducers/authReducer';
 import Header from '../Components/Header';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer2 from '../Components/Footer2';
+import {UseSessionContext} from '../context/createContext/useSession';
+import {Signup} from '../api/signup';
 
 function Signup2() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch=useDispatch();
+  const [created, setCreated] = useState(false)
+  const {session, updateSession} = useContext(UseSessionContext)
   const authSelector = useSelector((state) => state.authenticationSlice);
 
   const formik = useFormik({
@@ -32,19 +36,26 @@ function Signup2() {
         .required('Confirm Password is required'),
     }),
     onSubmit: (values) => {
-      dispatch(registerTutorAction(values));
+      Signup(values).then((response) => {
+        if(response.status===200) {
+          setCreated(true)
+        }
+        else {
+          toast.error(response.message??"Unable to process your credentials")
+        }
+      })
     },
   });
 
   useEffect(() => {
-    if (authSelector.registerTutorActionStatus === 'failed') {
-      toast.error(`${authSelector.registerTutorActionError}`);
-      dispatch(clearSignUpStatus());
+    if (session && session?.authentication?.error) {
+      toast.error(`Unable to complete your registration}`);
+      
     }
   }, [authSelector.registerTutorActionStatus, dispatch]);
 
   useEffect(() => {
-    if (authSelector.registerTutorActionStatus === 'completed') {
+    if (created) {
       toast.success('Account created', {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
@@ -54,11 +65,11 @@ function Signup2() {
         draggable: true,
       });
       setTimeout(() => {
-        navigate('/tutordashboard', { state: { first_name: formik.values.full_name, email: formik.values.email } });
-        dispatch(clearSignUpStatus());
+        navigate('/signin', { state: { first_name: formik.values.full_name, email: formik.values.email } });
+        
       }, 3000);
     }
-  }, [authSelector.registerTutorActionStatus, formik.values.full_name, formik.values.email, navigate, dispatch]);
+  }, [created, authSelector.registerTutorActionStatus, formik.values.full_name, formik.values.email, navigate, dispatch]);
 
   return (
     <div>

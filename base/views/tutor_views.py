@@ -18,6 +18,7 @@ from django.db.models import Q
 @permission_classes([IsAuthenticated])
 def getTutorProfile(request):
     profile = request.user.profile
+
     if profile.usertype == 'tutor':
         tutor = TutorProfile.objects.get(profile=profile)
         serializer = TutorProfileSerializer(tutor, many=False)

@@ -67,15 +67,13 @@ function Signin() {
 
   
   useEffect(() => { 
-    const data=JSON.parse(localStorage.getItem('tutor_data') !== "undefined"?localStorage.getItem("tutor_data"):'{}')
-    console.log(data,'Kow')
-    if(session?.authentication?.signin||data?.authentication?.signin) {
-      navigate('/tutordashboard');
+    
+    if(session?.authentication?.signin) {
+     
       // Show the popup modal
       setShowModal(true);
-      setTimeout(() => {
-        setShowModal(false);
-      }, 3000);
+        navigate('/tutordashboard');
+     
     }
     
   }, [session?.authentication?.signin])

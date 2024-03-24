@@ -8,5 +8,6 @@ urlpatterns = [
         path('register_tutor/', views.tutorRegister, name="register-user"),
         path('register_student/', views.studentRegister, name="register-user"),
         path('changepassword/', views.UserChangePassword, name="change"),
+        path('email-verify', views.VerifyEmailView.as_view(), name='email-verify'),
 
 ]

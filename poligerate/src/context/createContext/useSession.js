@@ -1,35 +1,54 @@
 // UserContext.js
 import { createContext } from 'react';
 
-export const tutorViewInitalData = {
+export const tutorViewInitalData={
+    
     authentication: {
         signin: false,
         token: '',
         error: 'Unable to Login'
     },
+    studentProfile: {
+        profile: {
+            user: {},
+                full_name: '',
+                first_name: '',
+                last_name: '',
+                email: '',
+                phone: '',
+                cretedate: '',
+                bio: '',
+                user_type: '',
+                createdAT: ''
+        },
+        grade_level: 'Grade 1',
+        preferred_subject: '',
+        learning_goal: '5',
+        timeezone:"country"
+    },
     tutorProfile: {
         profile: {
             user: {},
-            full_name: 'loading',
-            first_name: 'loading',
-            last_name: 'loading',
-            email: 'loading',
-            phone: 'loading',
-            cretedate: 'loading',
-            bio: 'loading',
-            user_type: 'loading',
-            createdAT: 'loading'
+            full_name: '...',
+            first_name: '...',
+            last_name: '',
+            email: '',
+            phone: '',
+            cretedate: '',
+            bio: '',
+            user_type: '',
+            createdAT: ''
         },
         subject: [{
-            name: 'loading',
-            level: 'loading',
-            price: 'loading'
+            name: '',
+            level: '',
+            price: ''
         }],
-        grades: 'loading',
-        sessionRate: 'loading',
+        grades: '',
+        sessionRate: '',
         avaliability_time: {},
         avaliableTime: {},
-        createdAt: "loading"
+        createdAt: ""
 
 
     }

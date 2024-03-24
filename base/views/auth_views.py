@@ -1,14 +1,17 @@
 
-from .. import email_util
+from ..utils import email_util
+from .. import utils
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from django.core.mail import send_mail
-
-from django.shortcuts import get_object_or_404
+import jwt
+from django.db import transaction
+from rest_framework.generics import GenericAPIView
+from django.conf import settings
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -34,10 +37,24 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+    #serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
+@transaction.atomic()
 def tutorRegister(request):
     data = request.data
     first_name = data.get('first_name', '')
@@ -50,6 +67,9 @@ def tutorRegister(request):
     bio = data.get('bio', '')
 
     try:
+        if User.objects.filter(email=email).exists():
+            return Response({"message": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
@@ -58,15 +78,16 @@ def tutorRegister(request):
             password=make_password(password)
         )
 
+        if Profile.objects.filter(email=email).exists():
+            return Response({"message": "Profile already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
         profile = Profile.objects.create(
             user=user,
-            full_name=username,  
+            full_name=username,
             email=email,
             user_type=user_type,
             image=image,
             bio=bio,
-
         )
 
         # TutorProfile instance
@@ -86,39 +107,30 @@ def tutorRegister(request):
                 document=data.get('document')
             )
 
-        # current_site = get_current_site(request).domain
-        # relative_link = reverse('email-verify')
-        # protocol = request.scheme
-        # absurl = protocol+'://'+current_site+relative_link+"?token="+str(token)
-        # email_body = 'Hi '+ user['username'] + \
-        #     ' Use the link below to verify your email \n' + absurl
-        # data = {'email_body': email_body, 'to_email': user['email'],
-        #         'email_subject': 'Verify your email'}
-
-        # email_util.send_email(data=data)
         serializer = UserSerializerWithToken(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:
-        return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
-        return Response({'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
-
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 @api_view(['POST'])
+@transaction.atomic
 def studentRegister(request):
     data = request.data
     first_name = data.get('first_name')
     last_name = data.get('last_name')
     username = data.get('username')
     email = data.get('email')
-    user_type = data.get('user_type') 
+    user_type = data.get('user_type')
     password = data.get('password')
     image = data.get('image')
     bio = data.get('bio')
+
 
     try:
 
@@ -130,15 +142,15 @@ def studentRegister(request):
             password=make_password(password)
         )
 
-        
+
         profile = Profile.objects.create(
             user=user,
-            full_name=username,  
+            full_name=username,
             email=email,
             user_type=user_type,
             image=image,
             bio=bio,
-           
+
         )
 
         # Student Profile
@@ -152,20 +164,20 @@ def studentRegister(request):
                 country= data.get('country'),
 
             )
-        
 
-        current_site = get_current_site(request).domain
-        relative_link = reverse('email-verify')
-        protocol = request.scheme
-        absurl = protocol+'://'+current_site+relative_link+"?token="+str(token)
-        email_body = 'Hi '+ user['username'] + \
-             ' Use the link below to verify your email \n' + absurl
-        data = {'email_body': email_body, 'to_email': user['email'],
-                 'email_subject': 'Verify your email'}
+        # current_site = get_current_site(request).domain
+        # relative_link = reverse('email-verify')
+        # protocol = request.scheme
+        # token = RefreshToken.for_user(email)
+        # absurl = protocol+'://'+current_site+relative_link+"?token="+str(token)
+        # email_body = 'Hi '+ user['username'] + \
+        #      ' Use the link below to verify your email \n' + absurl
+        # data = {'email_body': email_body, 'to_email': user['email'],
+        #          'email_subject': 'Verify your email'}
 
-        email_util.send_email(data=data)
+        # email_util.Util.send_email(data=data)
 
-        # Return success response
+        #Return success response
         serializer = UserSerializerWithToken(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -174,7 +186,7 @@ def studentRegister(request):
 
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 
 @api_view(['POST'])
@@ -205,3 +217,25 @@ def UserChangePassword(request):
     except User.DoesNotExist:
         return Response({"detail": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class VerifyEmailView(GenericAPIView):
+    serializer_class = EmailVerificationSerializer
+
+    token_param_config = openapi.Parameter(
+        'token', in_=openapi.IN_QUERY, description='Description', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(manual_parameters=[token_param_config])
+    def get(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, options={"verify_signature": False})
+            user = User.objects.get(id=payload['user_id'])
+            profile = Profile.objects.get(user=user)
+            if not profile.is_verified:
+                profile.is_verified = True
+                profile.save()
+            return Response({'email': 'Successfully activated'}, status=status.HTTP_200_OK)
+        except jwt.ExpiredSignatureError as identifier:
+            return Response({'error': 'Activation Expired'}, status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError as identifier:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
