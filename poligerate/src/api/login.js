@@ -14,7 +14,8 @@ export async function Login(email, password) {
         console.log(errr, 'drom')
         return {
             status: 500,
-            message: "Unable To Reach Server"
+            message: errr?.response?.data?.error||errr?.response?.data?.message||errr?.response?.data?.detail||'Unable To Process Your Request'
+
         }
     }
 

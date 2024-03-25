@@ -97,7 +97,7 @@ function Signin() {
           console.log(response, 'crom');
           if(response.status==401||response.status==500) {
 
-            setError(response.status===401? "User credentials is invalid ":'Server Internal Error')
+            toast.error(response.message)
          
             setIsloading(false)
           }
@@ -175,6 +175,9 @@ function Signin() {
                     }
                   }
                 })
+              }
+              else {
+                toast.error("Invalid Credential")
               }
 setIsloading(false)
             }
