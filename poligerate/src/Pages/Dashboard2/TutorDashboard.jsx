@@ -51,27 +51,26 @@ const Tabs = ({ tabs, setActiveTab, activeTab }) => {
 };
 
 const TutorDashboard = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [fullName, setFullName] = useState('');
+  const [activeTab, setActiveTab]=useState(0);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [email, setEmail]=useState('')
   const {session, Logout}=useContext(UseSessionContext)
   const location=useLocation();
+  const [isloading, setIsLaoding]=useState(true);
   const navigate  = useNavigate(); 
 
   useEffect(() => {
-    console.log(session, 'YMC')
-    if( !session && session.authentication.signin) {
+    setIsLaoding(true)
+    if(!session&&session.authentication.signin) {
       navigate('/signin')
-      return 
-    } 
-    // Check if the location state contains fullName and email and update the state
-    if (location.state) {
-      setFullName(location.state.fullName || '');
-      setEmail(location.state.email || '');
+      return
     }
+    else if(session&&session.authentication.user_type!='tutor') {
+      navigate('/dashboard')
+    }
+    setIsLaoding(false)
     
-  }, [location.state]);
+  }, [navigate, session.authentication.signin ,session.authentication.user_type,session.authentication.signin, isloading]);
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible)
   }
@@ -122,7 +121,7 @@ const TutorDashboard = () => {
     };
   
     return (
-    <div className="">
+    !isloading && <div className="">
       <div className={`flex lg:w-[20%] ${isSidebarVisible ? '' : 'sidebar-hidden'} `}>
         <div className={`sideBar bg-[#2977B5]  flex flex-col items-center px-2 ${isSidebarVisible ? 'flex' : 'hidden'}`}>
           <Link to='/'>

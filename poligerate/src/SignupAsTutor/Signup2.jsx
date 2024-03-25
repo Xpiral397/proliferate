@@ -17,10 +17,8 @@ function Signup2() {
   const navigate = useNavigate();
   const dispatch=useDispatch();
   const [created, setCreated] = useState(false)
-  const {session, updateSession} = useContext(UseSessionContext)
-  const authSelector = useSelector((state) => state.authenticationSlice);
-
-  const formik = useFormik({
+  const {session} = useContext(UseSessionContext)
+ const formik = useFormik({
     initialValues: {
       full_name: '',
       email: '',
@@ -50,9 +48,9 @@ function Signup2() {
   useEffect(() => {
     if (session && session?.authentication?.error) {
       toast.error(`Unable to complete your registration}`);
-      
     }
-  }, [authSelector.registerTutorActionStatus, dispatch]);
+
+  }, [session?.authentication?.error]);
 
   useEffect(() => {
     if (created) {
@@ -69,7 +67,7 @@ function Signup2() {
         
       }, 3000);
     }
-  }, [created, authSelector.registerTutorActionStatus, formik.values.full_name, formik.values.email, navigate, dispatch]);
+  }, [created, , formik.values.full_name, formik.values.email, navigate]);
 
   return (
     <div>

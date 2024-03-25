@@ -1,4 +1,4 @@
-import axiosClient from "./axios";
+import axiosClient from "../axios";
 
 
 export async function SignupUser({email, username, password, first_name, password2, last_name}) {

@@ -1,12 +1,12 @@
 // UserContext.js
 import { createContext } from 'react';
 
-export const tutorViewInitalData={
-    
+export const ViewInitalData={
     authentication: {
+        user_type: 'TUTOR',
         signin: false,
         token: '',
-        error: 'Unable to Login'
+        error: ''
     },
     studentProfile: {
         profile: {
@@ -53,6 +53,6 @@ export const tutorViewInitalData={
 
     }
 }
-const UseSessionContext = createContext({...tutorViewInitalData });
+const UseSessionContext = createContext({...ViewInitalData });
 
 export { UseSessionContext }

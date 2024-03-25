@@ -11,12 +11,14 @@ import {TutorContext} from '../context/createContext/useTutor';
 import {Login} from '../api/login';
 import Subject from '../Pages/Subject/Subject';
 import {UseSessionContext} from '../context/createContext/useSession';
+import {getUserProfile} from '../api/getProfile';
 
 function Signin() {
   const [email, setEmail]=useState('');
   const [password, setPassword]=useState('');
   const [isloading, setIsloading]=useState(false);
   const [showModal, setShowModal]=useState(false)
+  const [loading, setLoaidng] = useState(true);
   const [error, setError]=useState("")
   const {tutor, setTutor}=useContext(TutorContext)
   const {session, updateSession} = useContext(UseSessionContext)
@@ -66,17 +68,12 @@ function Signin() {
   // };
 
   
-  useEffect(() => { 
-    
+  useEffect(() => {
     if(session?.authentication?.signin) {
-     
-      // Show the popup modal
-      setShowModal(true);
-        navigate('/tutordashboard');
-     
+      console.log(session.authentication)
+        window.location.href = (session.authentication.user_type=='tutor'? '/tutordashboard':'/dashboard');
     }
-    
-  }, [session?.authentication?.signin])
+  }, [isloading])
   const handleLogin=() => {
     
     console.log(session)
@@ -105,6 +102,7 @@ function Signin() {
             setIsloading(false)
           }
           else {
+            setLoaidng(true)
             const {
               username,
               email,
@@ -113,44 +111,73 @@ function Signin() {
               last_name,
               token
             }=response.data
-            localStorage.setItem('token_data', token)
-            toast.success('Login Successful');
-            setShowModal(true)
-            updateSession(data => {
-              return {
-                authentication: {
-                  user_type: "tutor",
-                  token,
-                  ...session?.authentication,
-                  signin: true,
-                  error: "Success"
-                },
-                tutorProfile: {
-                  ...session?.tutorProfile?.profile,
-                  profile: {
-                    ...session?.tutorProfile?.profile,
-                    user: {},
-                    full_name: first_name+" "+last_name,
-                    first_name,
-                    last_name,
-                    email,
-                    phone: "",
-                    username,
-                    user_type: "tutor",
-                    isAdmin
-                  },
-                  subject: [],
-                  grades: "",
-                  sessionRate: "",
-                  avaliability_time: {},
-                  avaliableTime: {},
-                  createdAt: ""
-                }
+            localStorage.setItem('token', token)
+            const {user_type, bio, is_verified, phone}= await getUserProfile()
+            if(user_type && token) {
+              toast.success('Login Successful');
+              // setShowModal(true)
+              if(user_type==='tutor') {
+                updateSession(data => {
+                  return {
+                    authentication: {
+                      user_type,
+                      token,
+                      ...session?.authentication,
+                      signin: true,
+                      error: "Success"
+                    },
+                    tutorProfile: {
+                      ...session?.tutorProfile?.profile,
+                      profile: {
+                        ...session?.tutorProfile?.profile,
+                        user: {},
+                        full_name: first_name+" "+last_name,
+                        first_name,
+                        last_name,
+                        email,
+                        phone: "",
+                        username,
+                        user_type: "tutor",
+                        isAdmin
+                      },
+                      subject: [],
+                      grades: "",
+                      sessionRate: "",
+                      avaliability_time: {},
+                      avaliableTime: {},
+                      createdAt: ""
+                    }
+                  }
+                });
               }
-            });
-            console.log(session,'kop')
-       
-            navigate('/tutordashboard');
+              else if(user_type=='student') {
+                updateSession((data) => {
+                  return {
+                    ...session,
+                    authentication: {
+                      ...session.authentication,
+                      signin: true,
+                      token,
+                      user_type,
+                    },
+                    studentProfile: {
+                      ...session.studentProfile,
+                      profile: {
+                        ...session.studentProfile?.profile,
+                        user: {},
+                        first_name:first_name,
+                        last_name: last_name,
+                        email: email,
+                        username: username,
+                        bio,
+                      }
+                    
+                    }
+                  }
+                })
+              }
+setIsloading(false)
+            }
           }
         } catch(error) {
           console.log(error)
@@ -169,7 +196,7 @@ function Signin() {
 
 
   return (
-    <div>
+     <div>
       <Header />
       <div className="lg:px-28 px-5  my-16">
         <div className="poppins header text-center">

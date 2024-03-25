@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useUser } from '../Components/UserContext';
 import Header from '../Components/Header';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faChevronRight, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faChevronRight, faEye, faEyeSlash, faL } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerStudentAction } from '../Redux/actions/Auth';
 import { toast } from 'react-toastify';
-import { clearSignUpStatus } from '../Redux/reducers/authReducer';
+import {clearSignUpStatus} from '../Redux/reducers/authReducer';
+import {SignupUser} from '../../src/api/student/signup'
+import {UseSessionContext} from '../context/createContext/useSession';
+import {data} from 'autoprefixer';
 
 function Signup() {
   const [username, setUsername] = useState('')
@@ -18,7 +21,9 @@ function Signup() {
   const [password2, setPassword2] = useState('');
   const [passwordEmpty, setPasswordEmpty] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible]=useState(false);
+  const [checked, setChecked]=useState(false);
+  const [checkError, setCheckError] = useState(false);
   const [isloading, setIsloading] = useState(false);
   const [usernameEmpty, setUsernameEmpty] = useState(false);
   const [first_nameEmpty, setFirst_nameEmpty] = useState(false);
@@ -30,26 +35,26 @@ function Signup() {
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const dispatch=useDispatch();
+  const {session, updateSession:update} = useContext(UseSessionContext)
   const authSelector = useSelector((state) => state.authenticationSlice);
 
-  // useEffect(() => {
-  //   if (authSelector.registerStudentActionStatus === 'loading') {
-  //     setIsloading(true);
-  //     return;
-  //   }
-  // }, [authSelector.registerStudentActionStatus]);
+  if(session?.authentication?.signin) {
+    navigate('/dashboard', {state: {fullName: first_name}});
+  }
 
   useEffect(() => {
-    if (authSelector.registerStudentActionStatus === 'failed') {
-      toast.error(`${authSelector.registerStudentActionError}`);
-      dispatch (clearSignUpStatus())
-      return;
+    if(checked) {
+     setCheckError(false)
     }
-  }, [authSelector.registerStudentActionStatus]);
+    else {
+      setCheckError(true)
+    }
+  }, [checked, checkError]);
+
 
   useEffect(() => {
-    if (authSelector.registerStudentActionStatus === 'completed') {
+    if (session?.authentication?.signin) {
       toast.success('Account created', {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
@@ -59,13 +64,20 @@ function Signup() {
         draggable: true,
       });
       setTimeout(() => {
+        setShowModal(false)
         navigate('/dashboard', { state: { fullName: first_name } });
       }, 3000);
-      dispatch (clearSignUpStatus())
     } 
-  }, [authSelector.registerStudentActionStatus, navigate]);
+  }, [session?.authentication?.signin, navigate]);
 
-  const handleSignUp = () => {
+  const handleSignUp=() => {
+    if(!checked) {
+      setCheckError(true)
+      return 
+    }
+    else {
+      setCheckError(false)
+    }
     console.log("Clicked");
     if (!first_name || !last_name || !username || !email || !password || !password2) {
       setFirst_nameEmpty(!first_name);
@@ -82,8 +94,9 @@ function Signup() {
     }
 
     // Dispatch the signup action
-    SignupUser();
-      registerStudentAction({
+  
+   (async () => {
+      let responses=  await SignupUser({
         username: username,
         first_name: first_name,
         last_name: last_name,
@@ -91,6 +104,38 @@ function Signup() {
         password: password,
         password2: password2,
       })
+     console.log(responses)
+     if(responses.status!==201) {
+       toast.error(responses.message)
+     }
+     else {
+       const response = responses.data
+       setShowModal(true)
+       update((data) => {
+         return {
+           ...session,
+           authentication: {
+             ...session.authentication,
+             signin: true,
+             token:response?.token,
+             user_type: "student",
+           },
+           studentProfile: {
+             ...session.studentProfile,
+             profile: {
+               ...session.studentProfile.profile,
+               user: {},
+               first_name: response.first_name,
+               last_name: response.last_name,
+               email: response.email,
+               username: response.username
+             }
+           }
+         }
+       })
+       return toast.success("Your Account Has Been Created Succesfully")
+     }
+    })()
 
 
   };
@@ -98,7 +143,14 @@ function Signup() {
   return (
     <div>
       <Header />
-      <div className="px-10 lg:px-28 my-16 ">
+      <div className="px-10 lg:px-28 my-16  ">
+        {showModal&&(
+          <div className="popup-modal z-[100]">
+            <FontAwesomeIcon icon={faCheckCircle} className="text-6xl text-[#186BAD] my-2" />
+            <h2 className="text-2xl font-bold">Welcome back, Buddy!</h2>
+            <p className="my-3 text-[#186BAD] font-semibold">Proceeding to Dashboard...</p>
+          </div>
+        )}
         <div className="poppins header text-center inter">
           
           <h1 className=" lg:text-3xl text-2xl font-bold">Basic Information</h1>
@@ -234,8 +286,13 @@ function Signup() {
 
             <div className=" flex justify-between items-stretch gap-2 my-5">
               <div className="flex items-center gap-2">
-                <input type="checkbox" name="" id="" required />
-                <p className="text-[#898A8B] text-xs">
+                <input onChange={(element) => {
+                  setChecked(element.target.checked)
+                  if(checked) {
+                    setCheckError(false)
+                  }
+                }} type="checkbox" name="" id="" required />
+                <p className={`${checkError?"text-[red] animate-pulse":"text-[#898A8B]"} text-xs`}>
                   I Agree with all of your <a href="" className='text-[#186bad] font-semibold'>Terms & Conditions</a>
                 </p>
               </div>

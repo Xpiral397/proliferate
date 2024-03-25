@@ -8,7 +8,7 @@ import facebook from '../Assets/facebook.png'
 import {Link, useNavigate} from 'react-router-dom'
 
 
-function Register() {
+function Register() {  
     const navigate=useNavigate()
     const [student, setStudent]=useState(true)
     const [tutor, setTutor]=useState(true)

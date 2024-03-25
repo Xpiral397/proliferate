@@ -14,8 +14,11 @@ export async function useTutorProfile() {
             }
         })
         return fetch.data()
-    } catch (e) {
-        return {}
+    }
+    catch(e) {
+        return {
+            
+        }
     }
 
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import menu from '../../Assets/menu.png';
 import user from '../../Assets/user.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,6 +32,7 @@ import Reports from './Tabs/Reports';
 import Footer2 from '../../Components/Footer2';
 import { Link } from 'react-router-dom';
 import Notifications from './Components/Notification';
+import {UseSessionContext} from '../../context/createContext/useSession';
 
 // Tabs Component
 const Tabs = ({ tabs, setActiveTab, activeTab }) => {
@@ -57,16 +58,23 @@ const Tabs = ({ tabs, setActiveTab, activeTab }) => {
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [fullName, setFullName] = useState('');
-
+  const {session, Logout}=useContext(UseSessionContext)
+  const navigator=useNavigate()
+  const [loading, setIsloading] = useState(true)
+  
+  useEffect(() => {
+    setIsloading(true)
+    if(!(session?.authentication?.signin)) {
+      // console.log('ji')
+      navigator("/signin")
+    }
+    if(session?.authenthentication?.user_type == "tutor") {
+      navigator("/tutordashboard")
+    }
+    setIsloading(false)
+  },[navigator,  loading, session?.authentication?.sigin, session?.authentication?.user_type])
   const location = useLocation();
 
-  useEffect(() => {
-    // Check if the location state contains fullName and update the state
-    if (location.state && location.state.fullName) {
-      setFullName(location.state.fullName);
-    }
-  }, [location.state]);
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -116,7 +124,7 @@ const Dashboard = () => {
     ];
 
   return (
-    <div className="">
+    !loading && <div className="">
       <div className={`flex w-[20%] ${isSidebarVisible ? '' : 'sidebar-hidden'}`}>
         <div
           className={`sideBar bg-[#2977B5] flex flex-col items-center px-5 ${
@@ -133,7 +141,9 @@ const Dashboard = () => {
           </div>
 
           <div className="logout">
-            <button className="flex gap-2 items-center justify-start text-white bg-[#186bad] w-[200px] py-3 text-sm px-5 hover: rounded">
+            <button onClick={() => {
+              Logout('STUDENT')
+            }} className="flex gap-2 items-center justify-start text-white bg-[#186bad] w-[200px] py-3 text-sm px-5 hover: rounded">
               <FontAwesomeIcon icon={faRightFromBracket} />
               Logout
             </button>
@@ -175,7 +185,7 @@ const Dashboard = () => {
                 <img src="" alt="" />
               </div>
               <div className="">
-                <h2 className='studentName'>{fullName}</h2>
+                <h2 className='studentName'>{session?.studentProfile?.profile?.first_name + " " + session?.studentProfile?.profile?.last_name}</h2>
               </div>
               {/* <FontAwesomeIcon icon={faChevronDown} /> */}
             </div>
