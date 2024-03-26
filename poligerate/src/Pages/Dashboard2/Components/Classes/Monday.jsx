@@ -30,9 +30,10 @@ const Monday = () => {
     const { session, updateSession } = useContext(UseSessionContext)
     useEffect(() => {
         useMyClasses().then((data) => {
+            console.log(data,'class')
             setClassdata(data)
         })
-    })
+    }, [classData])
   
 
     const handleJoinNow = () => {

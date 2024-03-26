@@ -53,12 +53,8 @@ function Signin() {
     }
 
     // Dispatch the login action
-    dispatch(
-      signInAction({
-        email: email,
-        password: password,
-      })
-    );
+    
+    
     setIsloading(true);
   };
 
