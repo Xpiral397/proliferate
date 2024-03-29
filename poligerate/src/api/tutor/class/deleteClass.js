@@ -9,7 +9,7 @@ export async function deleteClass(pk) {
     const token=JSON.parse(localStorage.getItem('tutor_data')??'{}')?.authentication?.token
     console.log(token, 'kop')
     try {
-        const fetch=await axiosClient().get(`/tutor/delete-class/${pk}`, {
+        const fetch=await axiosClient().delete(`/tutor/delete-class/${pk}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

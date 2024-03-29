@@ -113,16 +113,17 @@ function Signin() {
             }=response.data
             localStorage.setItem('token', token)
             const {user_type, bio, is_verified, phone}= await getUserProfile()
-            if(user_type && token) {
+           
+            if(user_type&&token) {
               toast.success('Login Successful');
               // setShowModal(true)
               if(user_type==='tutor') {
                 updateSession(data => {
                   return {
                     authentication: {
+                      ...session?.authentication,
                       user_type,
                       token,
-                      ...session?.authentication,
                       signin: true,
                       error: "Success"
                     },

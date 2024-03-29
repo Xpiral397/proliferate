@@ -1,15 +1,15 @@
 import axiosClient from "../../axios"
 
 
-export async function getToken() {
+export async function createAssignment() {
     return localStorage.getItem('token')
 }
 
 export async function createClasses(obj) {
-    const token=JSON.parse(localStorage.getItem('tutor_data')?? '{}')?.authentication?.token
+    const token=JSON.parse(localStorage.getItem('tutor_data')??'{}')?.authentication?.token
     console.log(token, 'kop')
     try {
-        const fetch=await axiosClient().post('/tutor/create-class/', {
+        const fetch=await axiosClient().post('/tutor/create-assignment/', {
             body: {
                 ...obj
             },

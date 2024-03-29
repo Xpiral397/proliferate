@@ -5,14 +5,11 @@ export async function getToken() {
     return localStorage.getItem('token')
 }
 
-export async function createClasses(obj) {
-    const token=JSON.parse(localStorage.getItem('tutor_data')?? '{}')?.authentication?.token
+export async function deleteAssignment(pk) {
+    const token=JSON.parse(localStorage.getItem('tutor_data')??'{}')?.authentication?.token
     console.log(token, 'kop')
     try {
-        const fetch=await axiosClient().post('/tutor/create-class/', {
-            body: {
-                ...obj
-            },
+        const fetch=await axiosClient().delete(`/tutor/delete-assignments/${pk}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

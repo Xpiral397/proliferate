@@ -22,14 +22,29 @@ const AddClassPopup = ({ showModal, closeModal, formData, handleSubmit, handleIn
             </div>
             <form onSubmit={handleSubmit}>
               <div className="mb-4 flex items-center gap-4">
+                <label htmlFor="subject" className="block text-base font-semibold text-gray-600">
+                  Subject:
+                </label>
+                <input
+                  name="name"
+                  type='text'
+                  id="subject"
+                  className='w-full px-3 py-2 border-gray-500 boder border-[1px] rounded-md'
+                  onChange={handleInputChange}
+                />
+                {/* <option value="Select a subject"></option>
+                  <option value="English">English Language and Composition</option>
+                  <option value="Math">Mathematics for Science and Engineering II</option>
+                </input> */}
+              </div>
+              <div className="mb-4 flex items-center gap-4">
                 <label htmlFor="student" className="block text-base font-semibold text-gray-600">
                   Student Name:
                 </label>
                 <select
-                  name="studentName"
+                  name="students"
                   id="studentName"
                   className='w-full px-3 py-2 border-gray-500 border-[1px] rounded-md'
-                  value={formData.studentName}
                   onChange={handleInputChange}
                 >
                   <option value="SelectStudent"></option>
@@ -39,22 +54,7 @@ const AddClassPopup = ({ showModal, closeModal, formData, handleSubmit, handleIn
                   <option value="Goodness">Goodness Mbak</option>
                 </select>
               </div>
-              <div className="mb-4 flex items-center gap-4">
-                <label htmlFor="subject" className="block text-base font-semibold text-gray-600">
-                  Subject:
-                </label>
-                <select
-                  name="subject"
-                  id="subject"
-                  className='w-full px-3 py-2 border-gray-500 border-[1px] rounded-md'
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                >
-                  <option value="Select a subject"></option>
-                  <option value="English">English Language and Composition</option>
-                  <option value="Math">Mathematics for Science and Engineering II</option>
-                </select>
-              </div>
+              
 
               <div className="mb-4 flex items-center gap-4">
                 <label htmlFor="grade" className="block text-base font-semibold text-gray-600">
@@ -64,7 +64,6 @@ const AddClassPopup = ({ showModal, closeModal, formData, handleSubmit, handleIn
                   name="grade"
                   id="grade"
                   className='w-full px-3 py-2 border-gray-500 border-[1px] rounded-md'
-                  value={formData.grade}
                   onChange={handleInputChange}
                 >
                   <option value="Select a subject"></option>
@@ -104,9 +103,9 @@ const AddClassPopup = ({ showModal, closeModal, formData, handleSubmit, handleIn
                   <div className="w-full px-3 py-1 border-gray-500 border-[1px] rounded-md">
                     <input
                       type="time"
-                      id="startTime"
-                      name="startTime"
-                      value={formData.startTime}
+                      id="start_time"
+                      name="start_time"
+                     
                       onChange={handleInputChange}
                     />
                   </div>
@@ -120,8 +119,8 @@ const AddClassPopup = ({ showModal, closeModal, formData, handleSubmit, handleIn
                     <input
                       type="time"
                       id="endTime"
-                      name="endTime"
-                      value={formData.endTime}
+                      name="end_time"
+                    
                       onChange={handleInputChange}
                     />
                   </div>

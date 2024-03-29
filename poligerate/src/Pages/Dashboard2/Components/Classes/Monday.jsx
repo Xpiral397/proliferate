@@ -103,8 +103,8 @@ const Monday = () => {
     };
 
     const filteredClasses = classdata.filter((item) => {
-        const lowerCaseSearchQuery = searchQuery.toLowerCase();
-        return item.subject.toLowerCase().includes(lowerCaseSearchQuery);
+        const lowerCaseSearchQuery = searchQuery?.toLowerCase();
+        return item?.subject?.toLowerCase()?.includes(lowerCaseSearchQuery);
     });
 
 

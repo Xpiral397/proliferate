@@ -3,7 +3,7 @@ import axiosClient from "./axios";
 
 export async function Login(email, password) {
     try {
-        const response = await axiosClient().post("auth/login/", { password: password, username: email });
+        const response = await axiosClient().post("auth/login/", { password: password, email });
         if (response.statusCode === 401) {
             return { status: 401, message: response.detail }
 
