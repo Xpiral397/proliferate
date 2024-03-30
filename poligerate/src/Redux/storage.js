@@ -13,6 +13,6 @@ export const setToken = (token) => {
 
 export const getToken = () => {
   let token = JSON.parse(localStorage.getItem(KEY_TOKEN_STUDENT) ?? localStorage.getItem(KEY_TOKEN))
-  return token.authentication?.token;
+  return token?.authentication?.token;
 };
 
