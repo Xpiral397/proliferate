@@ -1,7 +1,7 @@
 import axiosClient from "../axios";
 
 
-export async function SignupUser({email, username, password, first_name, password2, username, last_name}) {
+export async function SignupUser({email, password, first_name, password2, username, last_name}) {
     try {
         const response=await axiosClient().post("auth/register_student/",
             {
