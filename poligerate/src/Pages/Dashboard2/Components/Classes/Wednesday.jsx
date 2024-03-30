@@ -10,6 +10,8 @@ import {useMyClasses} from '../../../../api/tutor/class/getMyClasses';
 import {updateClass} from '../../../../api/tutor/class/updateClasses';
 import {createClasses} from '../../../../api/tutor/class/createClass';
 import {getDay} from '../../../../helper/getDay';
+import {getStudentProfile} from '../../../../api/student/getStudentProfile';
+import {getProfile} from '../../../../api/student/getProfile';
 
 const Monday=() => {
   const [classdata, setClassdata]=useState([]);
@@ -151,7 +153,7 @@ const Monday=() => {
                   <div className="flex justify-between gap-20 my-4">
                     <p className=' flex gap-x-1 items-center'>
                       <FontAwesomeIcon icon={faMapMarked} />
-                      {item.id}
+                      {getProfile(item.id)}
                     </p>
                     <p className=' flex gap-x-1 items-center'>
                       <FontAwesomeIcon icon={faClock} />

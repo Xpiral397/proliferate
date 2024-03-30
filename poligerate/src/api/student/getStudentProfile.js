@@ -4,12 +4,7 @@ import {getUserToken} from "./getUserToken";
 
 export async function getStudentProfile() {
     try {
-        const response=await axiosClient().get("auth/get-student-profile/",
-            {
-                headers: {
-                    Authorization: getUserToken()
-                }
-            });
+        const response=await axiosClient().get("auth/get-student-profile/");
         if(response.statusCode===401) {
             return {status: 401, message: response.detail}
         }

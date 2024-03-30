@@ -102,10 +102,11 @@ const Monday = () => {
         closeModal();
     };
 
-    const filteredClasses = classdata.filter((item) => {
-        const lowerCaseSearchQuery = searchQuery?.toLowerCase();
-        return item?.subject?.toLowerCase()?.includes(lowerCaseSearchQuery);
-    });
+    const filteredClasses = []
+    // ?.filter((item) => {
+    //     const lowerCaseSearchQuery = searchQuery?.toLowerCase();
+    //     return item?.subject?.toLowerCase()?.includes(lowerCaseSearchQuery);
+    // });
 
 
     return (

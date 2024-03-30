@@ -2,12 +2,12 @@ import axiosClient from "../axios";
 import {getUserToken} from "./getUserToken";
 
 
-export async function getProfile() {
+export async function getProfile(id) {
     try {
-        const response=await axiosClient().get("auth/profile/",
+        const response=await axiosClient().get(`user/profile/${id}`,
             {
                 headers: {
-                    Authorization: getUserToken()
+                    Authorization: `Bearer ${getUserToken()}`
                 }
             });
         if(response.statusCode===401) {
