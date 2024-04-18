@@ -111,7 +111,7 @@ function Signin() {
               last_name,
               token
             }=response.data
-            localStorage.setItem('s', token)
+            localStorage.setItem('tokens', token)
             const {user_type, bio, is_verified, phone}= await getUserProfile()
            
             if(user_type&&token) {
