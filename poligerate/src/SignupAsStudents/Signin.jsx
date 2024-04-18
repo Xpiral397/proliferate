@@ -62,7 +62,7 @@ function Signin() {
   //     signInAction({
   //       email: email,
   //       password: password,
-  //     })
+  //     }) ,
   //   );
   //   setIsloading(true);
   // };
@@ -111,7 +111,7 @@ function Signin() {
               last_name,
               token
             }=response.data
-            localStorage.setItem('token', token)
+            localStorage.setItem('s', token)
             const {user_type, bio, is_verified, phone}= await getUserProfile()
            
             if(user_type&&token) {
@@ -243,10 +243,11 @@ setIsloading(false)
               <p className='text-[#186BAD] font-semibold'>Keep me signed in</p>
             </div>
             <button
+              
               onClick={handleLogin}
               type="submit"
               className={`signup text-white font-semibold py-3 bg-[#186BAD] lg:w-[400px] w-full rounded-lg ${!email||!password? 'opacity-50 cursor-not-allowed':''}`}
-              disabled={!email||!password}
+              disabled={!email||!password || isloading}
             >
               Sign in
             </button>

@@ -24,7 +24,8 @@ export async function Signup({ email, password, full_name, password2 }) {
             return { status: 401, message: response.detail }
         }
         return { data: response.data, status: 200 };
-    } catch (errr) {
+    } catch(errr) {
+        console.log(errr)
                 return {
             status: 500,
                     message: errr?.response?.data?.error||errr?.response?.data?.message||errr?.response?.data?.detail|| 'Unable To Process Your Request'

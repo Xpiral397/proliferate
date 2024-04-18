@@ -9,7 +9,7 @@ export async function Login(email, password) {
 
         }
         console.log(response.data)
-        return await { data: await response.data, status: 200 };
+        return  { data: await response.data, status: 200 };
     } catch (errr) {
         console.log(errr, 'drom')
         return {

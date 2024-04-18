@@ -100,7 +100,6 @@ const Tutors = () => {
     const tutorsPerPage = 12;
 
 
-    useEffect(() => {}, [time])
         ///////////////
     const totalPages = Math.ceil(allMentors.length / tutorsPerPage);
 

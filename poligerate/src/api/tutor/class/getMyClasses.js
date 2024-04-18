@@ -9,7 +9,11 @@ export async function useMyClasses() {
     const token=JSON.parse(localStorage.getItem('tutor_data')??'{}')?.authentication?.token
     console.log(token, 'kop')
     try {
-        const fetch=await axiosClient().get('/tutor/get-my-classes/')
+        const fetch=await axiosClient().get('/tutor/get-my-classes/', {
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        })
         return fetch.data
     } catch(e) {
         return []

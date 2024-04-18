@@ -123,12 +123,12 @@ function Signup() {
            studentProfile: {
              ...session.studentProfile,
              profile: {
-               ...session.studentProfile.profile,
+               ...session.studentProfile?.profile,
                user: {},
                first_name: response.first_name,
                last_name: response.last_name,
-               email: response.email,
-               username: response.username
+               email: response?.email,
+               username: response?.username
              }
            }
          }

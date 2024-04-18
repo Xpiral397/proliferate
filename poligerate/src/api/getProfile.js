@@ -6,7 +6,7 @@ export async function getUserProfile() {
     try {
         const fetch=await axiosClient().get('/user/profile/', {
             headers: {
-                Authorization: `Bearer ${await getToken()}`
+                Authorization: `Bearer ${getToken()}`
             }
         })
         return fetch.data
